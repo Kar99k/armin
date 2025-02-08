@@ -11,6 +11,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import useProject from "@/hooks/use-project";
 import { cn } from "@/lib/utils";
 import {
   HomeIcon,
@@ -46,24 +47,10 @@ const SidebarGroupItems = [
   },
 ] as const;
 
-const Projects = [
-  {
-    label: "Project 1",
-    href: "/projects/1",
-  },
-  {
-    label: "Project 2",
-    href: "/projects/2",
-  },
-  {
-    label: "Project 3",
-    href: "/projects/3",
-  },
-] as const;
-
 export function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
+  const { projects, projectId, setProjectId } = useProject();
 
   return (
     <Sidebar
@@ -105,20 +92,26 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
           <SidebarGroupContent className="flex flex-col gap-1">
-            {Projects.map((project) => (
-              <SidebarMenuItem key={project.label} className="list-none">
+            {projects?.map((project) => (
+              <SidebarMenuItem
+                key={project.id}
+                className="list-none"
+                onClick={() => setProjectId(project.id)}
+              >
                 <SidebarMenuButton asChild>
-                  <Link href={project.href}>
+                  <Link href={`/projects/${project.id}`}>
                     <div className="-ml-1.5 flex items-center gap-2">
                       <div
                         className={cn(
                           "flex h-7 w-7 items-center justify-center rounded-md border p-3",
-                          pathname === project.href && "bg-primary text-white",
+                          project.id === projectId && "bg-primary text-white",
                         )}
                       >
-                        {project.label[0]?.toUpperCase()}
+                        {project.projectName[0]?.toUpperCase()}
                       </div>
-                      <p className="text-sm font-medium">{project.label}</p>
+                      <p className="text-sm font-medium">
+                        {project.projectName}
+                      </p>
                     </div>
                   </Link>
                 </SidebarMenuButton>

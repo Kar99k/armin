@@ -25,7 +25,7 @@ export const projectRouter = createTRPCRouter({
                 userId: ctx.userId,
               },
             },
-          }
+          },
         });
 
         return project;
@@ -36,4 +36,21 @@ export const projectRouter = createTRPCRouter({
         throw new Error("Failed to create project");
       }
     }),
+  getProjects: protectedProcedure.query(async ({ ctx }) => {
+    if (!ctx.userId) {
+      throw new Error("User ID not found");
+    }
+    const projects = await ctx.db.project.findMany({
+      where: {
+        userToProject: {
+          some: {
+            userId: ctx.userId,
+          },
+        },
+        deletedAt: null,
+      },
+    });
+
+    return projects;
+  }),
 });

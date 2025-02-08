@@ -21,6 +21,7 @@ import {
 import { api } from "@/trpc/react";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
+import useRefetch from "@/hooks/use-refetch";
 
 const formSchema = z.object({
   repoUrl: z.string().url({ message: "Please enter a valid URL" }),
@@ -34,6 +35,7 @@ const formSchema = z.object({
 const CreateForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const createProject = api.project.createProject.useMutation();
+  const refetch = useRefetch();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,7 +45,7 @@ const CreateForm = () => {
     },
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
     void toast.promise(
@@ -57,9 +59,14 @@ const CreateForm = () => {
         success: () => {
           form.reset();
           setIsLoading(false);
+          void refetch().then();
           return "Project created successfully";
         },
-        error: "Failed to create project",
+
+        error: () => {
+          setIsLoading(false);
+          return "Failed to create project";
+        },
       },
     );
   };
