@@ -1,0 +1,39 @@
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { z } from "zod";
+
+export const projectRouter = createTRPCRouter({
+  createProject: protectedProcedure
+    .input(
+      z.object({
+        githubUrl: z.string(),
+        githubToken: z.string().optional(),
+        projectName: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      try {
+        if (!ctx.userId) {
+          throw new Error("User ID not found");
+        }
+
+        const project = await ctx.db.project.create({
+          data: {
+            githubUrl: input.githubUrl,
+            projectName: input.projectName,
+            userToProject: {
+              create: {
+                userId: ctx.userId,
+              },
+            },
+          }
+        });
+
+        return project;
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          throw error;
+        }
+        throw new Error("Failed to create project");
+      }
+    }),
+});
