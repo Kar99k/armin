@@ -1,3 +1,4 @@
+import { pollCommits } from "@/lib/github";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
@@ -28,6 +29,7 @@ export const projectRouter = createTRPCRouter({
           },
         });
 
+        await pollCommits(project.id);
         return project;
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -37,9 +39,6 @@ export const projectRouter = createTRPCRouter({
       }
     }),
   getProjects: protectedProcedure.query(async ({ ctx }) => {
-    if (!ctx.userId) {
-      throw new Error("User ID not found");
-    }
     const projects = await ctx.db.project.findMany({
       where: {
         userToProject: {
@@ -47,10 +46,26 @@ export const projectRouter = createTRPCRouter({
             userId: ctx.userId,
           },
         },
-        deletedAt: null,
       },
     });
 
     return projects;
   }),
+
+  getCommits: protectedProcedure
+    .input(
+      z.object({
+        projectId: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const commits = await ctx.db.commit.findMany({
+        where: {
+          projectId: input.projectId,
+        },
+      });
+
+      return commits;
+    }),
+    
 });

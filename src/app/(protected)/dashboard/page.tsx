@@ -1,8 +1,20 @@
+import CommitLog from "./components/commit-log";
+import TopContent from "./components/top-content";
+
 const DashboardPage = () => {
-    
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="flex flex-col gap-y-4">
+      <TopContent />
+
+      <div className="mt-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
+          AskQuestionsCard MeetingCard
+        </div>
+      </div>
+
+      <div className="mt-8"></div>
+
+      <CommitLog />
     </div>
   );
 };

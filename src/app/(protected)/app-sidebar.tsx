@@ -95,11 +95,11 @@ export function AppSidebar() {
             {projects?.map((project) => (
               <SidebarMenuItem
                 key={project.id}
-                className="list-none"
+                className="cursor-pointer list-none"
                 onClick={() => setProjectId(project.id)}
               >
                 <SidebarMenuButton asChild>
-                  <Link href={`/projects/${project.id}`}>
+                  <div>
                     <div className="-ml-1.5 flex items-center gap-2">
                       <div
                         className={cn(
@@ -113,7 +113,7 @@ export function AppSidebar() {
                         {project.projectName}
                       </p>
                     </div>
-                  </Link>
+                  </div>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
