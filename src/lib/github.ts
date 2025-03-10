@@ -98,7 +98,7 @@ export const pollCommits = async (projectId: string) => {
       commitAuthorName: unprocessedCommits[index]!.commitAuthorName,
       commitAuthorImageUrl: unprocessedCommits[index]!.commitAuthorImageUrl,
       commitDate: unprocessedCommits[index]!.commitDate,
-      summary: summary!,
+      summary: summary ?? "",
     })),
   });
 

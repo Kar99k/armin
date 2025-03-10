@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { type Document } from "@langchain/core/documents";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -40,3 +41,34 @@ export const summariseCommits = async (diff: string) => {
 
   return response.response.text();
 };
+
+export async function summariseCode(doc: Document): Promise<string> {
+  try {
+    const code = doc.pageContent.slice(0, 1000);
+    const response = await model.generateContent([
+      `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects
+       You are onboarding a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file Here is the code:
+        ---
+        ${code}
+        ---
+
+       Give a summary no more than 100 words of the code above.
+      `,
+    ]);
+
+    return response.response.text();
+  } catch (error) {
+    console.error("Failed to summarise code:", error);
+    throw new Error("Failed to generate code summary");
+  }
+}
+
+export async function generateEmbedding(summary: string) {
+  const model = genAI.getGenerativeModel({
+    model: "text-embedding-004",
+  });
+
+  const response = await model.embedContent(summary);
+  const embedding = response.embedding;
+  return embedding;
+}

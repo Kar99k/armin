@@ -11,7 +11,7 @@ const CommitLog = () => {
   if (!projectId) throw new Error("Project ID is required");
 
   const { data: commits } = api.project.getCommits.useQuery({
-    projectId,
+    projectId: projectId ?? "",
   });
 
   return (
