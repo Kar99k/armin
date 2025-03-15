@@ -1,6 +1,6 @@
 import CommitLog from "./components/commit-log";
 import TopContent from "./components/top-content";
-
+import AskQuestionCard from "./components/ask-question-card";
 const DashboardPage = () => {
   return (
     <div className="flex flex-col gap-y-4">
@@ -8,7 +8,7 @@ const DashboardPage = () => {
 
       <div className="mt-4">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-          AskQuestionsCard MeetingCard
+          <AskQuestionCard />
         </div>
       </div>
 
