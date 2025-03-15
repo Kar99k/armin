@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
   Dialog,
-  DialogTrigger,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { askQuestion } from "../actions";
 import { readStreamableValue } from "ai/rsc";
+import MDEditor from "@uiw/react-md-editor";
+import CodeReference from "./code-reference";
 
 const AskQuestionCard = () => {
   const { project } = useProject();
@@ -31,13 +32,14 @@ const AskQuestionCard = () => {
     if (!project?.id) return;
 
     e.preventDefault();
-
-    setIsOpen(true);
+    setAnswer("");
+    setFileReferences([]);
     setIsLoading(true);
 
     const { output, fileReferences } = await askQuestion(question, project.id);
     setFileReferences(fileReferences);
-    
+    setIsOpen(true);
+
     for await (const delta of readStreamableValue(output)) {
       if (delta) {
         setAnswer((prev) => prev + delta);
@@ -45,23 +47,32 @@ const AskQuestionCard = () => {
     }
 
     setIsLoading(false);
+    setQuestion("");
   };
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[80vh] max-w-[80vw] overflow-scroll">
           <DialogHeader>
             <DialogTitle>Armin</DialogTitle>
           </DialogHeader>
 
-          {answer && <div className="prose">{answer}</div>}
+          {answer && (
+            <MDEditor.Markdown
+              source={answer}
+              className="!h-full max-h-[60vh] max-w-[70vw] overflow-scroll p-4"
+            />
+          )}
+          <div className="mt-4">
+            <CodeReference filesReferences={fileReferences} />
+          </div>
 
           {fileReferences.length > 0 && (
             <div className="mt-4">
               <h3 className="text-lg font-medium">File References</h3>
               <ul className="list-disc pl-5">
-                {fileReferences.map((file) => ( 
+                {fileReferences.map((file) => (
                   <li key={file.fileName}>
                     <a href={`#${file.fileName}`}>{file.fileName}</a>
                   </li>
@@ -69,7 +80,6 @@ const AskQuestionCard = () => {
               </ul>
             </div>
           )}
-
         </DialogContent>
       </Dialog>
 
@@ -85,7 +95,9 @@ const AskQuestionCard = () => {
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
             />
-            <Button type="submit">Ask Armin</Button>
+            <Button type="submit" disabled={isLoading}>
+              {isLoading ? "Asking..." : "Ask Armin"}
+            </Button>
           </form>
         </CardContent>
       </Card>

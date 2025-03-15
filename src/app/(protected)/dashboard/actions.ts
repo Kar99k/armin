@@ -15,20 +15,20 @@ export async function askQuestion(question: string, projectId: string) {
 
   const vectorString = `[${queryVector.values.join(",")}]`;
 
-  const result = (await db.$queryRaw`
-    SELECT "fileName", "sourceCode", "summary",
-    1- ("summaryEmbedding" <=> ${vectorString}::vector) AS similarity
-    FROM "SourceCodeEmbedding"
-    WHERE 1 - ("summaryEmbedding" <=> ${vectorString}::vector) > .5
-    AND "projectId" = ${projectId}
-    ORDER BY similarity DESC
-    LIMIT 10
-  `) as {
+  const result = await db.$queryRaw<{
     fileName: string;
     sourceCode: string;
     summary: string;
     similarity: number;
-  }[];
+  }[]>`
+    SELECT "fileName", "sourceCode", "summary",
+    1- ("summaryEmbedding" <=> ${vectorString}::vector) AS similarity
+    FROM "SourceCodeEmbedding"
+    WHERE 1 - ("summaryEmbedding" <=> ${vectorString}::vector) > .4
+    AND "projectId" = ${projectId}
+    ORDER BY similarity DESC
+    LIMIT 10
+  `;
 
   let context = "";
 
@@ -39,9 +39,10 @@ export async function askQuestion(question: string, projectId: string) {
         summary of the file: ${doc.summary}\n\n
         `;
   }
-
-  (async () => {
-    const { textStream } = await streamText({
+        
+  void (async () => {
+    
+    const { textStream } = streamText({
       model: google("gemini-1.5-flash"),
       prompt: `You are a ai code assistant who answers questions about the codebase. Your
                 target audience is a technical intern who is looking to understand the
@@ -62,6 +63,8 @@ export async function askQuestion(question: string, projectId: string) {
                 START CONTEXT BLOCK
                 ${context}
                 END OF CONTEXT BLOCK
+
+                if context is empty, say "Provide more context in the question" and return an empty string
 
                 START QUESTION
                 ${question}
