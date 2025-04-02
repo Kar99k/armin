@@ -14,41 +14,37 @@ import {
 import useProject from "@/hooks/use-project";
 import { cn } from "@/lib/utils";
 import {
-  HomeIcon,
-  MessageSquare,
-  Calendar,
-  CreditCard,
   PlusIcon,
   BotMessageSquare,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 
-const SidebarGroupItems = [
-  {
-    label: "Dashboard",
-    icon: <HomeIcon />,
-    href: "/dashboard",
-  },
-  {
-    label: "QnA",
-    icon: <MessageSquare />,
-    href: "/qna",
-  },
-  {
-    label: "Meetings",
-    icon: <Calendar />,
-    href: "/meetings",
-  },
-  {
-    label: "Billing",
-    icon: <CreditCard />,
-    href: "/billing",
-  },
-] as const;
+// const SidebarGroupItems = [
+//   {
+//     label: "Dashboard",
+//     icon: <HomeIcon />,
+//     href: "/dashboard",
+//   },
+//   {
+//     label: "QnA",
+//     icon: <MessageSquare />,
+//     href: "/qna",
+//   },
+//   {
+//     label: "Meetings",
+//     icon: <Calendar />,
+//     href: "/meetings",
+//   },
+//   {
+//     label: "Billing",
+//     icon: <CreditCard />,
+//     href: "/billing",
+//   },
+// ] as const;
 
 export function AppSidebar() {
-  const pathname = usePathname();
+  // const pathname = usePathname();
   const { open } = useSidebar();
   const { projects, projectId, setProjectId } = useProject();
 
@@ -66,7 +62,7 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent className="flex flex-col gap-1">
             {SidebarGroupItems.map((item) => (
@@ -87,7 +83,7 @@ export function AppSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
 
         <SidebarGroup>
           <SidebarGroupLabel>Projects</SidebarGroupLabel>
