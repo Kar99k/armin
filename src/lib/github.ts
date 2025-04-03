@@ -40,11 +40,11 @@ export const getCommitHashes = async (githubUrl: string): Promise<Commit[]> => {
 
   return sortedCommits.slice(0, 15).map((commit: any) => {
     return {
-      commitHash: commit.sha as string,
-      commitMessage: (commit.commit.message as string) ?? "",
-      commitAuthorName: (commit.commit.author.name as string) ?? "",
-      commitAuthorImageUrl: (commit.author.avatar_url as string) ?? "",
-      commitDate: (commit.commit.author.date as string) ?? "",
+      commitHash: commit?.sha as string,
+      commitMessage: (commit?.commit?.message as string) ?? "",
+      commitAuthorName: (commit?.commit?.author?.name as string) ?? "",
+      commitAuthorImageUrl: (commit?.author?.avatar_url as string) ?? "",
+      commitDate: (commit?.commit?.author?.date as string) ?? "",
     };
   });
 };

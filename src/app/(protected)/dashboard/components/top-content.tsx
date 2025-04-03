@@ -26,9 +26,7 @@ const TopContent = () => {
       </div>
       <div className="h-4"></div>
 
-      <div className="flex items-center gap-4">
-        Team Members Invite Button Archive Button
-      </div>
+      <div className="flex items-center gap-4"></div>
     </div>
   );
 };
